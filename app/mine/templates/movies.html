@@ -1,0 +1,32 @@
+<html>
+    <head>
+    	<title> Movie </title>
+    </head>
+    <body>
+    	{% for movie in places %}
+    	    <p>
+    	    	<b> Movie_Name </b>: {{ movie.Film }}
+    	    </p>
+    	    <p>
+    	    	<b>Genre</b>: {{ movie.genre }}
+    	    </p>
+    	    <p>
+    	    	<b> Studio </b>: {{ movie.studio }}
+    	    </p>
+    	    <p>
+    	    	<b> Audiendce_Score </b>: {{ movie.audience_score }}
+    	    </p>
+    	    <p>
+    	    	<b> Profit </b>: {{ movie.profitability }}
+    	    </p>
+    	    <p>
+    	    	<b> Rotten </b>: {{ movie.rotten }}
+    	    </p>
+    	    <p>
+    	    	<b> Gross </b>: {{ movie.gross }}
+    	    </p>
+    	    <p>
+    	    	<b> Year </b>: {{ movie.year }}
+    	{% endfor %}
+    </body>
+</html>

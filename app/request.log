@@ -1,0 +1,1 @@
+{"levelname": "INFO", "headers_": null, "name": "werkzeug", "filename": "_internal.py", "module": "_internal", "funcName": "_log", "lineno": 113, "message": "127.0.0.1 - - [22/Mar/2021 17:30:04] \"\u001b[37mGET /movies HTTP/1.1\u001b[0m\" 200 -", "asctime": "03/22/2021 05:30:04 PM"}
