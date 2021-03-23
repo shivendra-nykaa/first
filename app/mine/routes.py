@@ -22,50 +22,6 @@ def index():
     ]
     return render_template('index.html', title='Home', user=user,posts=posts)
 
-def dump_request_detail(request):
-	request_detail = """
-	request.endpoint: {request.endpoint}
-	request.method: {request.method}
-	request.view_args: {request.view_args}
-	request.args: {request.args}
-	request.form: {request.form}
-	request.user_agent: {request.user_agent}
-	request.files: {request.files}
-
-	{request.headers}
-  	""".format(request=request).strip()
-	return request_detail
-
-#@app.before_request
-def simple():
-	root = logging.getLogger()
-	root.setLevel(logging.INFO)
-
-	sh = logging.StreamHandler()
-	formatter = JsonFormatter(
-		ensure_ascii=False,
-		mix_extra=True,
-		mix_extra_position='tail'  # optional: head, mix
-	)
-	sh.setFormatter(formatter)
-	sh.setLevel(logging.INFO)
-	root.addHandler(sh)
-	header = str(request.headers)
-
-	root.info(
-		'test mix extra in fmt',
-		extra={
-			'extra1': header,
-			'extra2': 'extra content 2'
-		})
-	root.info(
-		'test mix extra in fmt',
-		extra={
-			'extra3': 'extra content 3',
-			'extra4': 'extra content 4'
-		})
-
-
 @app.before_request
 def log_request_info():
 	file_handler = logging.FileHandler('request.log')
