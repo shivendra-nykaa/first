@@ -22,15 +22,84 @@ def index():
     ]
     return render_template('index.html', title='Home', user=user,posts=posts)
 
+def dump_request_detail(request):
+	request_detail = """
+	request.endpoint: {request.endpoint}
+	request.method: {request.method}
+	request.view_args: {request.view_args}
+	request.args: {request.args}
+	request.form: {request.form}
+	request.user_agent: {request.user_agent}
+	request.files: {request.files}
+
+	{request.headers}
+  	""".format(request=request).strip()
+	return request_detail
+
+#@app.before_request
+def simple():
+	root = logging.getLogger()
+	root.setLevel(logging.INFO)
+
+	sh = logging.StreamHandler()
+	formatter = JsonFormatter(
+		ensure_ascii=False,
+		mix_extra=True,
+		mix_extra_position='tail'  # optional: head, mix
+	)
+	sh.setFormatter(formatter)
+	sh.setLevel(logging.INFO)
+	root.addHandler(sh)
+	header = str(request.headers)
+
+	root.info(
+		'test mix extra in fmt',
+		extra={
+			'extra1': header,
+			'extra2': 'extra content 2'
+		})
+	root.info(
+		'test mix extra in fmt',
+		extra={
+			'extra3': 'extra content 3',
+			'extra4': 'extra content 4'
+		})
+
+
 @app.before_request
+def log_request_info():
+	file_handler = logging.FileHandler('request.log')
+	#file_handler.setLevel(logging.INFO)
+	sh = logging.StreamHandler()
+	formatter = JsonFormatter(
+		ensure_ascii=False,
+		mix_extra=True,
+		mix_extra_position='tail'  # optional: head, mix
+	)
+	file_handler.setFormatter(formatter)
+	sh.setFormatter(formatter)
+	root = logging.getLogger()
+	root.setLevel(logging.INFO)
+	root.addHandler(file_handler)
+	root.addHandler(sh)
+
+	meth = request.method
+	path = request.path
+	header = str(request.headers)
+	root.info('test mix extra in fmt',extra={'extra1': meth,'extra2': path})
+	root.info('test mix extra in fmt',extra={'extra3': header,'extra4': 'extra content 4'})
+
+	print(str(request.headers))
+
+#@app.before_request
 def beforerequest():
 	file_handler = logging.FileHandler('request.log')
 	file_handler.setLevel(logging.DEBUG)
 	headers_ = request.headers
-	jsonformatter = jsonlogger.JsonFormatter(
-		'%(levelname) %(headers_) %(name) %(filename) %(module) %(funcName) %(lineno) '
-		'%(message) %(asctime)', datefmt='%m/%d/%Y %I:%M:%S %p')
-	file_handler.setFormatter(jsonformatter)
+	#jsonformatter = jsonlogger.JsonFormatter(
+		#'%(levelname) %(headers_) %(name) %(filename) %(module) %(funcName) %(lineno) '
+		#'%(message) %(asctime)', datefmt='%m/%d/%Y %I:%M:%S %p')
+	#file_handler.setFormatter(jsonformatter)
 	loggers = [
 		#application.logger,
 		logging.getLogger()
@@ -39,11 +108,13 @@ def beforerequest():
 	for logger in loggers:
 		try:
 			logger.addHandler(file_handler)
-			logger.info('testing',extra={"headers": headers_})
+			#logger.info('testing',extra=dump_request_detail(request))
+			app.logger.debug(dump_request_detail(request))
 		except Exception as e:
 			print(e)
 
 	print(str(request.headers))
+	print(dump_request_detail(request))
 
 def movies_list():
 	with open('/home/shivendra.singh/shivam/app/mine/movies.csv') as csv_file:
